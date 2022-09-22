@@ -29,6 +29,7 @@ describe("Blergs", function () {
   
     await blergs.deployed();
     await blergs.setTraitsAddress(traits.address)
+    await traits.setBlergsAddress(blergs.address)
   
     const traits10 = [...Array(100).keys()];
     const array10 = Array(100).fill(1)
@@ -60,7 +61,8 @@ describe("Blergs", function () {
   
     await blergs.deployed();
     await blergs.setTraitsAddress(traits.address)
-  
+    await traits.setBlergsAddress(blergs.address)
+
     const traits10 = [...Array(100).keys()];
     const array10 = Array(100).fill(1)
   
@@ -116,6 +118,7 @@ describe("Blergs", function () {
   
     await blergs.deployed();
     await blergs.setTraitsAddress(traits.address)
+    await traits.setBlergsAddress(blergs.address)
   
     const traits10 = [...Array(100).keys()];
     const array10 = Array(100).fill(1)
@@ -142,8 +145,40 @@ describe("Blergs", function () {
 
   });
 
-  it("Transfer Trait (used on Blerg) - Should disable/default any blergs with trait if balance below 0", async function () {
+  it("Transfer Trait (used on Blerg) - Should disable/default any blergs with trait transfered", async function () {
 
+    const accounts = await hre.ethers.getSigners();
+
+    const TraitsFactory = await hre.ethers.getContractFactory("Traits");
+    const traits = await TraitsFactory.deploy();
+    await traits.deployed();
+  
+    const BlergsFactory = await hre.ethers.getContractFactory("Blergs");
+    const blergs = await BlergsFactory.deploy();
+    await blergs.deployed();
+    await blergs.setTraitsAddress(traits.address)
+    await traits.setBlergsAddress(blergs.address)
+  
+
+    const traits10 = [...Array(100).keys()];
+    const array10 = Array(100).fill(1)
+    await traits.connect(accounts[0]).mintBatch(traits10, array10)
+
+    const traitsparam = [86,2,33,56,66];
+    const mintWithTraits = await blergs.mintWithTraits(traitsparam);
+    await mintWithTraits.wait(); 
+
+    const uri = await blergs.tokenURI(0);
+    expect(uri).to.equal(`uri://${traitsparam[0]}_${traitsparam[1]}_${traitsparam[2]}_${traitsparam[3]}_${traitsparam[4]}_`);
+
+    traits.safeTransferFrom(accounts[0].address, accounts[1].address, 86, 1, '0x')
+    let balance = await traits.balanceOf(accounts[0].address,86)
+    console.log('BAL of 86', balance)
+    const uriPostTransfer = await blergs.tokenURI(0);
+
+    console.log(uriPostTransfer)
+    expect(uriPostTransfer).to.equal(`uri://0000`);
 
   });
+
 });

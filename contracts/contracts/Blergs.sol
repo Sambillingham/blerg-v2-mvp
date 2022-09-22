@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.12;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
@@ -12,15 +12,16 @@ interface ERC1155 {
     function balanceOf(address account, uint256 id) external view returns (uint256);
 }
 
-contract Blergs is ERC721URIStorage {
+contract Blergs is ERC721, ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
     string public blankBlergRef = '0000'; 
     address traitsContractAddress;
     mapping(uint256 => string) public artworkRef;
+    mapping(uint256 => uint256[]) public blergTraits;
 
-    constructor() ERC721 ("Bl-", "BV2") {}
+    constructor() ERC721("Bl-", "BV2") {}
 
     function setTraitsAddress(address traitsAddress) public {
         traitsContractAddress = traitsAddress;
@@ -30,6 +31,28 @@ contract Blergs is ERC721URIStorage {
         return 'uri://';
     }
 
+    function onTraitTransfer(address from, uint256 traitId) public {
+        uint256 blergsCount = balanceOf(from);
+
+        for (uint256 i = 0; i < blergsCount; i++) {
+            uint256 blergId = tokenOfOwnerByIndex(from, i);
+
+            // for (uint256 traitIndex = 0; traitIndex < traitTokenIds.length; traitIndex++) {
+                
+                for (uint256 f = 0; f < blergTraits[blergId].length; f++) {
+                    console.log(blergTraits[blergId][f]);
+                    
+                    if (blergTraits[blergId][f] == traitId && ERC1155(traitsContractAddress).balanceOf(from, traitId) < 2 ) {
+                        artworkRef[blergId] = blankBlergRef;
+                        console.log('found trait');
+                    }
+                }
+            
+            // }
+        } 
+    }
+
+    // 
     function setTraits(uint256 tokenId, uint256[] calldata traits ) public {
         require(ownerOf(tokenId) == msg.sender , "Must Own The Blerg");
         
@@ -48,9 +71,12 @@ contract Blergs is ERC721URIStorage {
         }
 
         artworkRef[tokenId] = artRef;
+        blergTraits[tokenId] = traits;
+        
         console.log("Artwork saved", tokenId, artRef);
     }
     
+    // Fetch TokenURI based on TokenId
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
         string memory baseURI = _baseURI();
@@ -76,5 +102,23 @@ contract Blergs is ERC721URIStorage {
         setTraits(tokenId, traits);
         _tokenIds.increment();
         console.log("ID: %s minted => %s | W/ Traits", tokenId, msg.sender);
+    }
+    
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        console.log('BEFORE TRANSFER');
+        artworkRef[tokenId] = blankBlergRef;
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }
