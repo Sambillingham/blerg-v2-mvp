@@ -37,20 +37,13 @@ contract Blergs is ERC721, ERC721Enumerable {
         for (uint256 i = 0; i < blergsCount; i++) {
             uint256 blergId = tokenOfOwnerByIndex(from, i);
 
-            // for (uint256 traitIndex = 0; traitIndex < traitTokenIds.length; traitIndex++) {
+            for (uint256 f = 0; f < blergTraits[blergId].length; f++) {
+                console.log(blergTraits[blergId][f]);
                 
-                for (uint256 f = 0; f < blergTraits[blergId].length; f++) {
-                    console.log(blergTraits[blergId][f]);
-                    
-                    if (blergTraits[blergId][f] == traitId && ERC1155(traitsContractAddress).balanceOf(from, traitId) < 2 ) {
-                        artworkRef[blergId] = blankBlergRef;
-                        console.log('found trait');
-                    }
-                }
-            
-            // }
-        } 
-    }
+                if (blergTraits[blergId][f] == traitId && ERC1155(traitsContractAddress).balanceOf(from, traitId) < 2 ) {
+                    artworkRef[blergId] = blankBlergRef;
+            }
+    } 
 
     // 
     function setTraits(uint256 tokenId, uint256[] calldata traits ) public {
@@ -91,7 +84,6 @@ contract Blergs is ERC721, ERC721Enumerable {
         artworkRef[tokenId] = blankBlergRef;
     
         _tokenIds.increment();
-        console.log("ID: %s minted => %s", tokenId, msg.sender);
     }
     
     // Minted w/ Traits
@@ -101,14 +93,12 @@ contract Blergs is ERC721, ERC721Enumerable {
         _safeMint(msg.sender, tokenId);
         setTraits(tokenId, traits);
         _tokenIds.increment();
-        console.log("ID: %s minted => %s | W/ Traits", tokenId, msg.sender);
     }
     
     function _beforeTokenTransfer(address from, address to, uint256 tokenId)
         internal
         override(ERC721, ERC721Enumerable)
     {
-        console.log('BEFORE TRANSFER');
         artworkRef[tokenId] = blankBlergRef;
         super._beforeTokenTransfer(from, to, tokenId);
     }

@@ -37,8 +37,6 @@ contract Traits is ERC1155, Ownable {
         override(ERC1155)
     {
         for (uint256 i = 0; i < ids.length; i++) {
-            console.log(from);
-            console.log(operator);
             ERC721(blergsContractAddress).onTraitTransfer(operator, ids[i]);    
         }
         
