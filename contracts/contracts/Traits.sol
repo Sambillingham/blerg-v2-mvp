@@ -44,7 +44,7 @@ contract Traits is ERC1155, Ownable {
     {
         if ( from != address(0)) {
             for (uint256 i = 0; i < equippedAddressList[from].length; i++) {
-                ERC721(equippedAddressList[from][i]).onTraitTransfer(operator, ids);    
+                ERC721(equippedAddressList[from][i]).onTraitTransfer(from, ids);    
             }
         }
 
