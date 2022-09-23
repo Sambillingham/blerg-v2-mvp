@@ -14,7 +14,7 @@ contract Traits is ERC1155, Ownable {
 
     string public name = 'Items';
     string public symbol = 'ITM';
-    
+
     mapping(address => mapping(address => bool)) public equippedAddress;
     mapping (address => address[]) public equippedAddressList;
 

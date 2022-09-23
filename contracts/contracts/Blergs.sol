@@ -46,14 +46,6 @@ contract Blergs is ERC721, ERC721Enumerable {
                     }
                 }
             }
-
-            // for (uint256 f = 0; f < blergTraits[blergId].length; f++) {
-            //     console.log(blergTraits[blergId][f]);
-                
-            //     if (blergTraits[blergId][f] == traitId && ERC1155(traitsContractAddress).balanceOf(from, traitId) < 2 ) {
-            //         artworkRef[blergId] = blankBlergRef;
-            //     }
-            // }
         }
     } 
 
