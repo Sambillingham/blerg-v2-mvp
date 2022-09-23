@@ -10,6 +10,7 @@ import "hardhat/console.sol";
 interface ERC1155 {
     function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids) external view returns (uint256[] memory);
     function balanceOf(address account, uint256 id) external view returns (uint256);
+    function registerAddress(address contractAddress, address user) external;
 }
 
 contract Blergs is ERC721, ERC721Enumerable {
@@ -31,18 +32,29 @@ contract Blergs is ERC721, ERC721Enumerable {
         return 'uri://';
     }
 
-    function onTraitTransfer(address from, uint256 traitId) public {
+    function onTraitTransfer(address from, uint256[] memory traitIds) public {
         uint256 blergsCount = balanceOf(from);
 
         for (uint256 i = 0; i < blergsCount; i++) {
             uint256 blergId = tokenOfOwnerByIndex(from, i);
 
-            for (uint256 f = 0; f < blergTraits[blergId].length; f++) {
-                console.log(blergTraits[blergId][f]);
-                
-                if (blergTraits[blergId][f] == traitId && ERC1155(traitsContractAddress).balanceOf(from, traitId) < 2 ) {
-                    artworkRef[blergId] = blankBlergRef;
+            for (uint256 t = 0; t < traitIds.length; t++) {
+                for (uint256 b = 0; b < blergTraits[blergId].length; b++) {
+                    
+                    if (blergTraits[blergId][b] == traitIds[t] && ERC1155(traitsContractAddress).balanceOf(from, traitIds[t]) < 2 ) {
+                        artworkRef[blergId] = blankBlergRef;
+                    }
+                }
             }
+
+            // for (uint256 f = 0; f < blergTraits[blergId].length; f++) {
+            //     console.log(blergTraits[blergId][f]);
+                
+            //     if (blergTraits[blergId][f] == traitId && ERC1155(traitsContractAddress).balanceOf(from, traitId) < 2 ) {
+            //         artworkRef[blergId] = blankBlergRef;
+            //     }
+            // }
+        }
     } 
 
     // 
@@ -66,7 +78,8 @@ contract Blergs is ERC721, ERC721Enumerable {
         artworkRef[tokenId] = artRef;
         blergTraits[tokenId] = traits;
         
-        console.log("Artwork saved", tokenId, artRef);
+        ERC1155(traitsContractAddress).registerAddress(address(this), msg.sender);
+        ERC1155(traitsContractAddress).registerAddress(address(this), msg.sender);
     }
     
     // Fetch TokenURI based on TokenId
