@@ -7,6 +7,7 @@ import styles from '../styles/Home.module.css';
 import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads } from 'wagmi';
 import ContractInterfaceTraits from '../Traits.json';
 import ContractInterfaceBlergs from '../Blergs.json';
+import { CLIENT_STATIC_FILES_RUNTIME_POLYFILLS_SYMBOL } from 'next/dist/shared/lib/constants';
 
 
 const Home: NextPage = () => {
@@ -192,7 +193,7 @@ const Home: NextPage = () => {
       <div className={styles.intro}>
         <p>Traits/Blergs Integration MVP</p>
         <p> <strong>Version: Integrated Callback</strong> - Allows other smart contracts to initiate a function call when traits are transfered. This allows projects to take action when traits move between wallets e.g - remove the trait a wallet not longer owns from a character</p>
-        <p>Any project can integrate by calling registerAddress(args) and implementing an 'onTraitTransfer(args)' method and use that data as needed</p>
+        <p>Any project can integrate by calling registerAddress(args) and implementing an onTraitTransfer(args) method and use that data as needed</p>
           <ul>
           <li>Mint Pack of Traits - IDs #0-9</li>
           <li>Select 5 Traits to Mint A Blerg </li>
@@ -201,6 +202,12 @@ const Home: NextPage = () => {
           <li>Transfering away traits in use by a blerg to a balance of zero will reset the blergs data to default (0000)</li>
           <li>Transfering Blerg  will reset the blergs data to default (0000) </li>
           </ul>
+        <p>
+        Traits deployed to: 0x4F449148AD107Ea76b888216Bf4fCAaba62D86d7
+        </p>
+        <p>
+        blergs deployed to: 0x4f4899E99464Ee29d8f4e925C68e570c6EE945Ea
+        </p>
       </div>
 
       <div className={styles.split}>
@@ -214,7 +221,7 @@ const Home: NextPage = () => {
               <div
               className={styles.blergTraits}>
                   {selectedTraits.map((x, i) =>
-                    <div className={styles.trait} >
+                    <div  key={i.toString()} className={styles.trait} >
                       #{x}
                     </div>
                 )}
