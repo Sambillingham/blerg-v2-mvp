@@ -26,12 +26,12 @@ const Home: NextPage = () => {
   React.useEffect(() => setMounted(true), []);
 
   const traitsContract = {
-    addressOrName: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    addressOrName: '0x4F449148AD107Ea76b888216Bf4fCAaba62D86d7',
     contractInterface : ContractInterfaceTraits.abi
   }
 
   const blergsContract = {
-    addressOrName: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+    addressOrName: '0x4f4899E99464Ee29d8f4e925C68e570c6EE945Ea',
     contractInterface : ContractInterfaceBlergs.abi
   }
 
