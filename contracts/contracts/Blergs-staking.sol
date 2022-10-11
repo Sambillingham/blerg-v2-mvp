@@ -39,14 +39,6 @@ contract BlergsStaking is ERC721, ERC721Enumerable {
             }
         }
 
-        string memory artRef = '';
-
-        for (uint256 i = 0; i < traits.length; i++) {
-            artRef = string.concat(artRef, Strings.toString(traits[i]));
-            artRef = string.concat(artRef,'_');
-        }
-
-        artworkRef[tokenId] = artRef;
         blergTraits[tokenId] = traits;
     }
     
@@ -56,13 +48,20 @@ contract BlergsStaking is ERC721, ERC721Enumerable {
         
         string memory baseURI = _baseURI();
 
+        string memory artRef = '';
+
+        for (uint256 i = 0; i < blergTraits[tokenId].length; i++) {
+            artRef = string.concat(artRef, Strings.toString(blergTraits[tokenId][i]));
+            artRef = string.concat(artRef,'_');
+        }
+
         for (uint256 i = 0; i < blergTraits[tokenId].length; i++) {
             if(!ERC1155(traitsContractAddress).staked(msg.sender,   blergTraits[tokenId][i])){
                 return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, blankBlergRef)) : "";
             }
         }
         
-        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, artworkRef[tokenId])) : "";
+        return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, artRef)) : "";
     }
     
     // Minted w/ Traits

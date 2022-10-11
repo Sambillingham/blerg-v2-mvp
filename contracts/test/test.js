@@ -30,12 +30,12 @@ describe("Blergs", function () {
     await blergs.deployed();
     await blergs.setTraitsAddress(traits.address)
   
-    const traits10 = [...Array(100).keys()];
-    const array10 = Array(100).fill(1)
+    const traits10 = [...Array(10).keys()];
+    const array10 = Array(10).fill(1)
   
     await traits.connect(accounts[0]).mintBatch(traits10, array10)
 
-    const traitsparam = [86,22,11,03,04];
+    const traitsparam = [6,2,1,3,4];
     const mintWithTraits = await blergs.mintWithTraits(traitsparam);
     await mintWithTraits.wait(); 
     const uri = await blergs.tokenURI(0);
@@ -58,12 +58,12 @@ describe("Blergs", function () {
     await blergs.deployed();
     await blergs.setTraitsAddress(traits.address)
 
-    const traits10 = [...Array(100).keys()];
-    const array10 = Array(100).fill(1)
+    const traits10 = [...Array(10).keys()];
+    const array10 = Array(10).fill(1)
   
     await traits.connect(accounts[0]).mintBatch(traits10, array10)
 
-    const traitsparam = [11,02,11,05,99];
+    const traitsparam = [6,2,1,3,4];
     const buildBlerg = await blergs.mint();
     await buildBlerg.wait();   
     let uri = await blergs.tokenURI(0);
@@ -114,12 +114,12 @@ describe("Blergs", function () {
     await blergs.deployed();
     await blergs.setTraitsAddress(traits.address)
   
-    const traits10 = [...Array(100).keys()];
-    const array10 = Array(100).fill(1)
+    const traits10 = [...Array(10).keys()];
+    const array10 = Array(10).fill(1)
   
     await traits.connect(accounts[0]).mintBatch(traits10, array10)
 
-    const traitsparam = [11,02,11,05,99];
+    const traitsparam = [6,2,1,3,4];
     const buildBlerg = await blergs.mint();
     await buildBlerg.wait();   
     let uri = await blergs.tokenURI(0);
@@ -153,18 +153,18 @@ describe("Blergs", function () {
     await blergs.setTraitsAddress(traits.address)
   
 
-    const traits10 = [...Array(100).keys()];
-    const array10 = Array(100).fill(1)
+    const traits10 = [...Array(10).keys()];
+    const array10 = Array(10).fill(1)
     await traits.connect(accounts[0]).mintBatch(traits10, array10)
 
-    const traitsparam = [86,2,33,56,66];
+    const traitsparam = [6,2,1,3,4];
     const mintWithTraits = await blergs.mintWithTraits(traitsparam);
     await mintWithTraits.wait(); 
 
     const uri = await blergs.tokenURI(0);
     expect(uri).to.equal(`uri://${traitsparam[0]}_${traitsparam[1]}_${traitsparam[2]}_${traitsparam[3]}_${traitsparam[4]}_`);
 
-    traits.safeTransferFrom(accounts[0].address, accounts[1].address, 86, 1, '0x')
+    traits.safeTransferFrom(accounts[0].address, accounts[1].address, 6, 1, '0x')
     let balance = await traits.balanceOf(accounts[0].address,86)
     const uriPostTransfer = await blergs.tokenURI(0);
 
@@ -186,18 +186,18 @@ describe("Blergs", function () {
     await blergs.setTraitsAddress(traits.address)
   
 
-    const traits10 = [...Array(100).keys()];
-    const array10 = Array(100).fill(1)
+    const traits10 = [...Array(10).keys()];
+    const array10 = Array(10).fill(1)
     await traits.connect(accounts[0]).mintBatch(traits10, array10)
 
-    const traitsparam = [86,2,33,56,66];
+    const traitsparam = [6,2,1,3,4];
     const mintWithTraits = await blergs.mintWithTraits(traitsparam);
     await mintWithTraits.wait(); 
 
     const uri = await blergs.tokenURI(0);
     expect(uri).to.equal(`uri://${traitsparam[0]}_${traitsparam[1]}_${traitsparam[2]}_${traitsparam[3]}_${traitsparam[4]}_`);
 
-    traits.safeTransferFrom(accounts[0].address, accounts[1].address, 99, 1, '0x')
+    traits.safeTransferFrom(accounts[0].address, accounts[1].address, 9, 1, '0x')
     const uriPostTransfer = await blergs.tokenURI(0);
 
     expect(uriPostTransfer).to.equal(`uri://${traitsparam[0]}_${traitsparam[1]}_${traitsparam[2]}_${traitsparam[3]}_${traitsparam[4]}_`);

@@ -26,10 +26,14 @@ contract TraitsStaking is ERC1155, Ownable {
 
     function stake(uint256 id) public  {
         staked[msg.sender][id] = true;
+
+        // event
     }
 
     function unstake(uint256 id) public {
         staked[msg.sender][id] = false;
+
+        // event 
     }
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
