@@ -8,12 +8,10 @@ import "hardhat/console.sol";
 
 
 interface ERC1155 {
-    function balanceOfBatch(address[] calldata accounts, uint256[] calldata ids) external view returns (uint256[] memory);
-    function balanceOf(address account, uint256 id) external view returns (uint256);
-    function registerAddress(address contractAddress, address user) external;
+    function staked(address userAddress, uint256 id) external view returns (bool);
 }
 
-contract Blergs is ERC721, ERC721Enumerable {
+contract BlergsStaking is ERC721, ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -32,66 +30,43 @@ contract Blergs is ERC721, ERC721Enumerable {
         return 'uri://';
     }
 
-    function onTraitTransfer(address from, uint256[] memory traitIds) public {
-        uint256 blergsCount = balanceOf(from);
+    function setTraits(uint256 tokenId, uint256[5] calldata traits ) public {
+        require(ownerOf(tokenId) == msg.sender , "Must Own The Blerg");
 
-        for (uint256 i = 0; i < blergsCount; i++) {
-            uint256 blergId = tokenOfOwnerByIndex(from, i);
-
-            for (uint256 t = 0; t < traitIds.length; t++) {
-                for (uint256 b = 0; b < blergTraits[blergId].length; b++) {
-                    
-                    if (blergTraits[blergId][b] == traitIds[t] && ERC1155(traitsContractAddress).balanceOf(from, traitIds[t]) < 2 ) {
-                        artworkRef[blergId] = blankBlergRef;
-                    }
-                }
+        for (uint256 i = 0; i < traits.length; i++) {
+            if(!ERC1155(traitsContractAddress).staked(msg.sender, traits[i])){
+                revert("Trait is not staked");
             }
         }
-    } 
 
-    // 
-    function setTraits(uint256 tokenId, uint256[] calldata traits ) public {
-        require(ownerOf(tokenId) == msg.sender , "Must Own The Blerg");
-        
-        address[] memory accounts = new address[](5);
-        for (uint256 i = 0; i < accounts.length; i++) {
-            accounts[i] = msg.sender;
-        }
-
-        uint256[] memory balances = ERC1155(traitsContractAddress).balanceOfBatch(accounts, traits);
         string memory artRef = '';
 
-        for (uint256 i = 0; i < balances.length; i++) {
-            require(balances[i] > 0 , "Missing Trait");
+        for (uint256 i = 0; i < traits.length; i++) {
             artRef = string.concat(artRef, Strings.toString(traits[i]));
             artRef = string.concat(artRef,'_');
         }
 
         artworkRef[tokenId] = artRef;
         blergTraits[tokenId] = traits;
-        
-        ERC1155(traitsContractAddress).registerAddress(address(this), msg.sender);
     }
     
     // Fetch TokenURI based on TokenId
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         _requireMinted(tokenId);
+        
         string memory baseURI = _baseURI();
+
+        for (uint256 i = 0; i < blergTraits[tokenId].length; i++) {
+            if(!ERC1155(traitsContractAddress).staked(msg.sender,   blergTraits[tokenId][i])){
+                return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, blankBlergRef)) : "";
+            }
+        }
+        
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, artworkRef[tokenId])) : "";
-    }
-
-    // Minted Blank
-    function mint() public {
-        uint256 tokenId = _tokenIds.current();
-
-        _safeMint(msg.sender, tokenId);
-        artworkRef[tokenId] = blankBlergRef;
-    
-        _tokenIds.increment();
     }
     
     // Minted w/ Traits
-    function mintWithTraits(uint256[] calldata traits) public {
+    function mintWithTraits(uint256[5] calldata traits) public {
         uint256 tokenId = _tokenIds.current();
 
         _safeMint(msg.sender, tokenId);
