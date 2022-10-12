@@ -6,8 +6,8 @@ import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 
 import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads } from 'wagmi';
-import ContractInterfaceTraits from '../Traits.json';
-import ContractInterfaceBlergs from '../Blergs.json';
+import ContractInterfaceTraits from '../TraitsStaking.json';
+import ContractInterfaceBlergs from '../BlergsStaking.json';
 
 
 const Home: NextPage = () => {
@@ -17,6 +17,7 @@ const Home: NextPage = () => {
   const [totalBlergs, setTotalBlergs] = React.useState<number>(0);
   const [totalSupply, setTotalSupply] = React.useState<number>(0);
   const [allURIs, setAllURIs] = React.useState<any[]>([])
+  const [allStaked, setAllStaked] = React.useState<any[]>([])
   const [allOwners, setAllOwners] = React.useState<any[]>([])
   const [selectedTraits, setSelectedTraits] = React.useState<number[]>([]);
   const [sendId, setSendId] = React.useState<number>(0);
@@ -26,12 +27,12 @@ const Home: NextPage = () => {
   React.useEffect(() => setMounted(true), []);
 
   const traitsContract = {
-    addressOrName: '0x4F449148AD107Ea76b888216Bf4fCAaba62D86d7',
+    addressOrName: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
     contractInterface : ContractInterfaceTraits.abi
   }
 
   const blergsContract = {
-    addressOrName: '0x4f4899E99464Ee29d8f4e925C68e570c6EE945Ea',
+    addressOrName: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
     contractInterface : ContractInterfaceBlergs.abi
   }
 
@@ -62,6 +63,21 @@ const Home: NextPage = () => {
     args: [address, '0x4Ead8bf030fd5575Fe978A5040ed82434e059691', sendId, 1, '0x']
   });
   const { write: sendTrait } = useContractWrite(sendTraitConfig)
+
+  const { config: stake } = usePrepareContractWrite({
+    ...traitsContract,
+    functionName: 'stake',
+    args: [sendId]
+  });
+  const { write: stakeTrait } = useContractWrite(stake)
+
+  const { config: unstake } = usePrepareContractWrite({
+    ...traitsContract,
+    functionName: 'unstake',
+    args: [sendId]
+  });
+  const { write: unstakeTrait } = useContractWrite(unstake)
+
 
   const { config: sendBlergConfig } = usePrepareContractWrite({
     ...blergsContract,
@@ -105,6 +121,14 @@ const Home: NextPage = () => {
   const emitSwitchTraits = (traitId: number) => {
     setSendId(traitId);
     switchTraits?.();
+  }
+  const emitStakeTrait = (traitId: number) => {
+    setSendId(traitId);
+    stakeTrait?.();
+  }
+  const emitUnstakeTrait = (traitId: number) => {
+    setSendId(traitId);
+    unstakeTrait?.();
   }
 
   const addSelectedTrait = (traitId: number) => {
@@ -155,8 +179,7 @@ const Home: NextPage = () => {
   React.useEffect( () => {
     if (allBlergsUri) setAllURIs(allBlergsUri)
   }, [allBlergsUri]);
-
-
+  
 
   const { data: allOwnersAddress  } = useContractReads({
     contracts: [
@@ -173,6 +196,24 @@ const Home: NextPage = () => {
   React.useEffect( () => {
     if (allOwnersAddress) setAllOwners(allOwnersAddress)
   }, [allOwnersAddress]);
+
+
+  const { data: allTraitsStaked  } = useContractReads({
+    contracts: [
+      ...[...Array(10)].map( (x, i) => {
+        return {
+          ...traitsContract,
+          functionName: 'staked',
+          args: [address,i]
+      }})
+    ],
+    watch: true,
+  })
+
+  React.useEffect( () => {
+    if (allTraitsStaked) setAllStaked(allTraitsStaked)
+  }, [allTraitsStaked]);
+
 
   return (
     <div className={styles.container}>
@@ -194,25 +235,28 @@ const Home: NextPage = () => {
 
         <h2>Traits/Blergs Integration MVP</h2>
 
-        <ConnectButton />
+            <p>{allStaked[0]}</p>
+            <p>{allStaked[1]}</p>
 
+        
+        <ConnectButton />
       <div className={styles.intro}>
         
-        <p> <strong>Version: Integrated Callback</strong> - Allows other smart contracts to initiate a function call when traits are transfered. This allows projects to take action when traits move between wallets e.g - remove the trait a wallet not longer owns from a character</p>
-        <p>Any project can integrate by calling registerAddress(args) and implementing an onTraitTransfer(args) method and use that data as needed</p>
+        <p> <strong>Version: Staking</strong> - Traits user tokens can be staked, locking them from being transfered. Third party contracts can check the status of staked tokens</p>
           <ul>
           <li>Mint Pack of Traits - IDs #0-9</li>
-          <li>Select 5 Traits to Mint A Blerg </li>
+          <li>Select tokens to stake/unstake</li>
           <li>Switch traits on existing Blerg</li>
-          <li><strong>Traits can only be used if owned</strong></li>
-          <li>Transfering away traits in use by a blerg to a balance of zero will reset the blergs data to default (0000)</li>
+          <li>Traits can only be used if <strong>staked</strong></li>
+          <li>Cannot Transfer traits without unstaking</li>
+          <li>Unstaking a Trait without first rebuilding a Blerg will cause the blerg (with trait) to be reset</li>
           <li>Transfering Blerg  will reset the blergs data to default (0000) </li>
           </ul>
         <p>
-        Traits deployed to: 0x4F449148AD107Ea76b888216Bf4fCAaba62D86d7
+        Traits deployed to: {traitsContract.addressOrName}
         </p>
         <p>
-        blergs deployed to: 0x4f4899E99464Ee29d8f4e925C68e570c6EE945Ea
+        blergs deployed to: {blergsContract.addressOrName}
         </p>
       </div>
 
@@ -291,21 +335,47 @@ const Home: NextPage = () => {
                     <div className={styles.trait} >
                       #{i}
                       <p>{x}</p>
+                      
                     </div>
-                    <button 
-                      className={styles.button}
-                      onClick={() => addSelectedTrait?.(i)}
-                    >
-                      add
-                    </button>
-                  
-                    <button 
-                      className={styles.button}
-                      onClick={() => emitSendTrait?.(i)}
-                    >
-                      Send
-                    </button>
-                  
+                    <div>
+                        <div>
+                        {  allStaked[i] && (
+                            <button 
+                            className={styles.button}
+                            onClick={() => addSelectedTrait?.(i)}
+                            >
+                            add (#{i})
+                            </button>
+                        )}
+                        {  !allStaked[i] && (
+                            <button 
+                            className={styles.button}
+                            onClick={() => emitSendTrait?.(i)}
+                            >
+                            Send (#{i})
+                            </button>
+                        )}
+                        </div>
+                        <div>
+                            {  !allStaked[i] && (
+                            <button 
+                            className={styles.button}
+                            onClick={() => emitStakeTrait?.(i)}
+                            >
+                            stake (#{i})
+
+                            </button> )}
+
+                            {  allStaked[i] && (
+                            <button 
+                            className={styles.button}
+                            onClick={() => emitUnstakeTrait?.(i)}
+                            >
+                            unstake (#{i})
+                            </button> )}
+
+                        </div>
+                    </div>
                   </div>
                 )}
               </div>

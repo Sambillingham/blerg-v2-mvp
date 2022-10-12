@@ -8,15 +8,15 @@ import { publicProvider } from 'wagmi/providers/public';
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
-    chain.mainnet,
-    chain.polygon,
-    chain.optimism,
-    chain.arbitrum,
+    // chain.mainnet,
+    // chain.polygon,
+    // chain.optimism,
+    // chain.arbitrum,
     chain.hardhat,
     chain.goerli,
-    chain.kovan,
-    chain.rinkeby,
-    chain.ropsten
+    // chain.kovan,
+    // chain.rinkeby,
+    // chain.ropsten
   ],
   [
     alchemyProvider({
@@ -29,7 +29,7 @@ const { chains, provider, webSocketProvider } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: 'RainbowKit App',
+  appName: 'Blergs App',
   chains,
 });
 
