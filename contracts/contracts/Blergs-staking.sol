@@ -49,6 +49,7 @@ contract BlergsStaking is ERC721, ERC721Enumerable {
         string memory baseURI = _baseURI();
 
         string memory artRef = '';
+        address tokenOwner = ownerOf(tokenId);
 
         for (uint256 i = 0; i < blergTraits[tokenId].length; i++) {
             artRef = string.concat(artRef, Strings.toString(blergTraits[tokenId][i]));
@@ -56,7 +57,7 @@ contract BlergsStaking is ERC721, ERC721Enumerable {
         }
 
         for (uint256 i = 0; i < blergTraits[tokenId].length; i++) {
-            if(!ERC1155(traitsContractAddress).staked(msg.sender,   blergTraits[tokenId][i])){
+            if(!ERC1155(traitsContractAddress).staked(tokenOwner,   blergTraits[tokenId][i])){
                 return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, blankBlergRef)) : "";
             }
         }

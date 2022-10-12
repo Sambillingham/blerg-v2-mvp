@@ -215,4 +215,41 @@ describe("Blergs Staking", function () {
 
   });
 
+  it("Transfer Blergs (with Traits) - Should be a blank Blerg after Transfer ", async function () {
+
+    const accounts = await hre.ethers.getSigners();
+
+    const TraitsFactory = await hre.ethers.getContractFactory("TraitsStaking");
+    const traits = await TraitsFactory.deploy();
+  
+    await traits.deployed();
+  
+    await traits.stake(0);
+    await traits.stake(1);
+    await traits.stake(2);
+    await traits.stake(3);
+    await traits.stake(4);
+
+    const BlergsFactory = await hre.ethers.getContractFactory("BlergsStaking");
+    const blergs = await BlergsFactory.deploy();
+  
+    await blergs.deployed();
+    await blergs.setTraitsAddress(traits.address)
+  
+
+    const traitsparam = [0,1,2,3,4];
+    const mintWithTraits = await blergs.mintWithTraits(traitsparam);
+    await mintWithTraits.wait(); 
+    const uri = await blergs.tokenURI(0);
+    expect(uri).to.equal(`uri://${traitsparam[0]}_${traitsparam[1]}_${traitsparam[2]}_${traitsparam[3]}_${traitsparam[4]}_`);
+
+    await blergs["safeTransferFrom(address,address,uint256)"](accounts[0].address, accounts[1].address, 0)
+    owner = await blergs.ownerOf(0)
+    const newuri = await blergs.tokenURI(0);
+
+    expect(owner ).to.equal(accounts[1].address);
+    expect(newuri).to.equal(`uri://0000`);
+
+  });
+
 });

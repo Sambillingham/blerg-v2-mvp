@@ -13,6 +13,9 @@ contract TraitsStaking is ERC1155, Ownable {
 
     mapping(address => mapping(uint256 => bool)) public staked;
 
+    event traitStake(address sender, uint256 tokenId);
+    event traitUnstake(address sender, uint256 tokenId);
+
     function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
     }
@@ -27,13 +30,13 @@ contract TraitsStaking is ERC1155, Ownable {
     function stake(uint256 id) public  {
         staked[msg.sender][id] = true;
 
-        // event
+        emit traitStake(msg.sender, id);
     }
 
     function unstake(uint256 id) public {
         staked[msg.sender][id] = false;
 
-        // event 
+        emit traitUnstake(msg.sender, id);
     }
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
