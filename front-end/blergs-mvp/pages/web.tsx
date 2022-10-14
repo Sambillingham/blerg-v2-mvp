@@ -5,21 +5,17 @@ import Link from 'next/link';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 
-import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads } from 'wagmi';
+import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads, useSignMessage } from 'wagmi';
 import ContractInterfaceTraits from '../Traits.json';
 import ContractInterfaceBlergs from '../Blergs.json';
-
 
 const Home: NextPage = () => {
   const [mounted, setMounted] = React.useState(false);
 
   const [totalMinted, setTotalMinted] = React.useState<number[]>([]);
-  const [totalBlergs, setTotalBlergs] = React.useState<number>(0);
   const [totalSupply, setTotalSupply] = React.useState<number>(0);
-  const [allURIs, setAllURIs] = React.useState<any[]>([])
   const [allOwners, setAllOwners] = React.useState<any[]>([])
   const [selectedTraits, setSelectedTraits] = React.useState<number[]>([]);
-  const [sendId, setSendId] = React.useState<number>(0);
   
   const { address, isConnected } = useAccount();
 
@@ -49,26 +45,6 @@ const Home: NextPage = () => {
   });
   const { write: mintBlerg } = useContractWrite(configBlergs);
 
-  const { config: configBlergSwitch } = usePrepareContractWrite({
-    ...blergsContract,
-    functionName: 'setTraits',
-    args: [sendId, selectedTraits]
-  });
-  const { write: switchTraits } = useContractWrite(configBlergSwitch);
-
-  const { config: sendTraitConfig } = usePrepareContractWrite({
-    ...traitsContract,
-    functionName: 'safeTransferFrom',
-    args: [address, '0x4Ead8bf030fd5575Fe978A5040ed82434e059691', sendId, 1, '0x']
-  });
-  const { write: sendTrait } = useContractWrite(sendTraitConfig)
-
-  const { config: sendBlergConfig } = usePrepareContractWrite({
-    ...blergsContract,
-    functionName: 'transferFrom',
-    args: [address, '0x4Ead8bf030fd5575Fe978A5040ed82434e059691', sendId ]
-  });
-  const { write: sendBlerg } = useContractWrite(sendBlergConfig)
 
   const { data: balanceData } = useContractRead({
     ...traitsContract,
@@ -90,21 +66,42 @@ const Home: NextPage = () => {
     watch: true
   });
  
-  const emitSendTrait = (traitId: number) => {
-    setSendId(traitId);
-    console.log(traitId, sendId)
-    sendTrait?.();
-  }
 
-  const emitSendBlerg = (traitId: number) => {
-    setSendId(traitId);
-    console.log(traitId, sendId)
-    sendBlerg?.();
-  }
+  const { data: signedMessage, error, isLoading, signMessage } = useSignMessage({
+    async onSuccess(data, variables) {
+      console.log(signedMessage);
 
-  const emitSwitchTraits = (traitId: number) => {
-    setSendId(traitId);
-    switchTraits?.();
+      const response = await fetch('http://localhost:8888/.netlify/functions/verify', {
+          method: 'POST',
+          cache: 'no-cache',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            message: variables.message,
+            address,
+            signedMessage: data
+          }) 
+      })
+      const json = await response.json();
+    },
+  })
+
+
+  const emitSwitchTraits = async (blergId: number) => {
+    const content = [`Trait Switch// Blerg #${blergId} `, blergId, ...selectedTraits].join(':');
+
+    signMessage({message: content})
+  }
+  const emitMintBlerg = async () => {
+      mintBlerg?.()
+      const response = await fetch('http://localhost:8888/.netlify/functions/mint', {
+        method: 'POST',
+        cache: 'no-cache',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          traits: selectedTraits,
+          blergId: totalSupply
+        }) 
+    })
   }
 
   const addSelectedTrait = (traitId: number) => {
@@ -125,36 +122,16 @@ const Home: NextPage = () => {
   }, [balanceData]);
 
 
-  React.useEffect(() => {
-    if (blergBal) {
-      setTotalBlergs(blergBal.toNumber());
-    }
-  }, [blergBal]);
-
-
   React.useEffect( () => {
     if (contractSupply) {
       setTotalSupply(contractSupply.toNumber());
       console.log('supply - ', contractSupply)
     }
   }, [contractSupply]);
-  
-
-  const { data: allBlergsUri  } = useContractReads({
-    contracts: [
-      ...[...Array(totalSupply)].map( (x, i) => {
-        return {
-          ...blergsContract,
-          functionName: 'tokenURI',
-          args: [i]
-      }})
-    ],
-    watch: true,
-  })
 
   React.useEffect( () => {
-    if (allBlergsUri) setAllURIs(allBlergsUri)
-  }, [allBlergsUri]);
+    
+  }, []);
 
 
 
@@ -186,35 +163,28 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-
         <nav>
-          <Link href="/">v:direct-link</Link>
-          <Link href="/staking">v:staking</Link>
+          <Link href="/web">web</Link>
+          <br/>
+          <Link href="/staking">staking</Link>
+          <br/>
+          <Link className={styles.link} href="/direct">direct</Link>
         </nav>
 
         <h2>Traits/Blergs Integration MVP</h2>
 
         <ConnectButton />
 
-      <div className={styles.intro}>
+        <div className={styles.intro}>
         
-        <p> <strong>Version: Integrated Callback</strong> - Allows other smart contracts to initiate a function call when traits are transfered. This allows projects to take action when traits move between wallets e.g - remove the trait a wallet not longer owns from a character</p>
-        <p>Any project can integrate by calling registerAddress(args) and implementing an onTraitTransfer(args) method and use that data as needed</p>
+        <p> <strong>Version: Web</strong> - Traits can be freely switched with a signed message</p>
           <ul>
           <li>Mint Pack of Traits - IDs #0-9</li>
-          <li>Select 5 Traits to Mint A Blerg </li>
-          <li>Switch traits on existing Blerg</li>
-          <li><strong>Traits can only be used if owned</strong></li>
-          <li>Transfering away traits in use by a blerg to a balance of zero will reset the blergs data to default (0000)</li>
-          <li>Transfering Blerg  will reset the blergs data to default (0000) </li>
+          <li>Select Traits you own to use to Mint</li>
+          <li>Switch Traits on existing Blerg - Freely</li>
           </ul>
-        <p>
-        Traits deployed to: 0x4F449148AD107Ea76b888216Bf4fCAaba62D86d7
-        </p>
-        <p>
-        blergs deployed to: 0x4f4899E99464Ee29d8f4e925C68e570c6EE945Ea
-        </p>
-      </div>
+        </div>
+        
 
       <div className={styles.split}>
         <section>
@@ -235,19 +205,19 @@ const Home: NextPage = () => {
 
               <button 
                 className={styles.button}
-                onClick={() => mintBlerg?.()} >
+                onClick={() => emitMintBlerg?.()} >
                 Build Blerg
               </button>
             </div>
           )}
           <div>
-            wallet - {totalBlergs} - Total Supply {totalSupply}
+           Total Supply {totalSupply}
           </div>
           <div>
           {[...Array(totalSupply)].map((x, i) =>
             <div key={i.toString()}>
               <div className={styles.blerg} >
-                #{allURIs[i]}
+                <Link href={`/api/${i}`}><a> URI: //api/${i}</a></Link>
                 <p>owner : {(allOwners[i])?.substring(0,5)}</p>
               </div>
               <button 
@@ -256,12 +226,7 @@ const Home: NextPage = () => {
               >
                 switch Traits
               </button>
-              <button 
-                className={styles.button}
-                onClick={() => emitSendBlerg?.(i)}
-              >
-                Send Blerg
-              </button>
+
             
             </div>
           )}
@@ -283,7 +248,7 @@ const Home: NextPage = () => {
                 Mint Pack (10)
               </button>
             <h1 className={styles.title}>
-              Wallet
+              Traits
             </h1>
               <div className={styles.traits}>
                 {totalMinted.map((x, i) =>
@@ -297,13 +262,6 @@ const Home: NextPage = () => {
                       onClick={() => addSelectedTrait?.(i)}
                     >
                       add
-                    </button>
-                  
-                    <button 
-                      className={styles.button}
-                      onClick={() => emitSendTrait?.(i)}
-                    >
-                      Send
                     </button>
                   
                   </div>
