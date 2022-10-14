@@ -71,7 +71,7 @@ const Home: NextPage = () => {
     async onSuccess(data, variables) {
       console.log(signedMessage);
 
-      const response = await fetch('http://localhost:8888/.netlify/functions/verify', {
+      const response = await fetch('http://dancing-capybara-b2f749.netlify.app/.netlify/functions/verify', {
           method: 'POST',
           cache: 'no-cache',
           headers: {'Content-Type': 'application/json'},
@@ -93,7 +93,7 @@ const Home: NextPage = () => {
   }
   const emitMintBlerg = async () => {
       mintBlerg?.()
-      const response = await fetch('http://localhost:8888/.netlify/functions/mint', {
+      const response = await fetch('http://dancing-capybara-b2f749.netlify.app/.netlify/functions/mint', {
         method: 'POST',
         cache: 'no-cache',
         headers: {'Content-Type': 'application/json'},

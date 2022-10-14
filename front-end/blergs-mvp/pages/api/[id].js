@@ -2,7 +2,7 @@
 
 export default async function handler(req, res) {
   const { id } = req.query
-  const response = await fetch('http://localhost:8888/.netlify/functions/get', {
+  const response = await fetch('http://dancing-capybara-b2f749.netlify.app/.netlify/functions/get', {
       method: 'POST',
       cache: 'no-cache',
       headers: {'Content-Type': 'application/json'},
