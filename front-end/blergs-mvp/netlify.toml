@@ -1,0 +1,11 @@
+## netlify.toml
+
+[build]
+  publish = "out"
+  command = "next build && next export"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/api/[id].html"
+  status = 200
+  force = true
