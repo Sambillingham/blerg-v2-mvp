@@ -9,6 +9,8 @@ import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead,
 import ContractInterfaceTraits from '../Traits.json';
 import ContractInterfaceBlergs from '../Blergs.json';
 
+const { NEXT_PUBLIC_URL } = process.env;
+
 const Home: NextPage = () => {
   const [mounted, setMounted] = React.useState(false);
 
@@ -71,7 +73,7 @@ const Home: NextPage = () => {
     async onSuccess(data, variables) {
       console.log(signedMessage);
 
-      const response = await fetch('http://dancing-capybara-b2f749.netlify.app/.netlify/functions/verify', {
+      const response = await fetch(`${NEXT_PUBLIC_URL}/api/verify`, {
           method: 'POST',
           cache: 'no-cache',
           headers: {'Content-Type': 'application/json'},
@@ -93,7 +95,7 @@ const Home: NextPage = () => {
   }
   const emitMintBlerg = async () => {
       mintBlerg?.()
-      const response = await fetch('http://dancing-capybara-b2f749.netlify.app/.netlify/functions/mint', {
+      const response = await fetch(`${NEXT_PUBLIC_URL}/api/mint`, {
         method: 'POST',
         cache: 'no-cache',
         headers: {'Content-Type': 'application/json'},
@@ -217,7 +219,7 @@ const Home: NextPage = () => {
           {[...Array(totalSupply)].map((x, i) =>
             <div key={i.toString()}>
               <div className={styles.blerg} >
-                <Link href={`/api/${i}`}><a> URI: //api/${i}</a></Link>
+                <Link href={`/api/blerg/${i}`}><a> {NEXT_PUBLIC_URL}/api/blerg/{i}</a></Link>
                 <p>owner : {(allOwners[i])?.substring(0,5)}</p>
               </div>
               <button 

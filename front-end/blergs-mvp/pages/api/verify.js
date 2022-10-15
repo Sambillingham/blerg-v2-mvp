@@ -1,6 +1,4 @@
 
-
-import 'dotenv/config';
 const { createClient } =  require('@supabase/supabase-js')
 import { ethers } from 'ethers';
 
@@ -14,15 +12,24 @@ const supabase = createClient(DATABASE_URL, SUPABASE_SERVICE_API_KEY);
 exports.handler = async (event, context, callback) => {
 
     
-    const { blergId, traits}  = JSON.parse(event.body);
+    const { message, address, signedMessage }  = JSON.parse(event.body);
+    console.log(address)
+    console.log(signedMessage)
+    console.log(message)
 
-    console.log(blergId, traits)
+    const signerAddress = ethers.utils.verifyMessage(message, signedMessage);
+    const data = message.split(':');
+    const blergId = data[1]
+    const traits = data.slice(2,7).join()
+    console.log('traits', traits)
+
     const blerg = await supabase
         .from('blerg')
-        .insert({ 
-            traits: traits,
-            blergId: blergId,
+        .update({ 
+            traits: traits
         })
+        .eq('blergId', blergId)
+        .single()
     
     if (blerg.data) {
         return {
