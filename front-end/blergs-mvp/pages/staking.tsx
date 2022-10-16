@@ -4,6 +4,7 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import Navbar from '../components/navbar';
 
 import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads } from 'wagmi';
 import ContractInterfaceTraits from '../TraitsStaking.json';
@@ -128,6 +129,7 @@ const Home: NextPage = () => {
   }
   const emitUnstakeTrait = (traitId: number) => {
     setSendId(traitId);
+    console.log('unstake', traitId);
     unstakeTrait?.();
   }
 
@@ -227,21 +229,12 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-
-      <nav>
-          <Link href="/web">web</Link>
-          <br/>
-          <Link href="/staking">staking</Link>
-          <br/>
-          <Link className={styles.link} href="/direct">direct</Link>
-        </nav>
-
+        <Navbar/>
         <h2>Traits/Blergs Integration MVP</h2>
 
             <p>{allStaked[0]}</p>
             <p>{allStaked[1]}</p>
 
-        
         <ConnectButton />
       <div className={styles.intro}>
         

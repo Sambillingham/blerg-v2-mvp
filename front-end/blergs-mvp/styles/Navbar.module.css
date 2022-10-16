@@ -1,0 +1,11 @@
+.navBar {
+  border: dotted 1px rgb(207, 207, 207);
+  display: flex;
+}
+
+.navItem {
+  padding: 1rem 2rem;
+}
+.navItem:hover {
+  background-color: rgba(197, 197, 197, 0.156);
+}

@@ -4,6 +4,7 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+import Navbar from '../components/navbar';
 
 import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads, useSignMessage } from 'wagmi';
 import ContractInterfaceTraits from '../Traits.json';
@@ -100,6 +101,7 @@ const Home: NextPage = () => {
     signMessage({message: content})
   }
   const emitMintBlerg = async () => {
+    console.log(selectedTraits)
       mintBlerg?.()
       const response = await fetch(`${NEXT_PUBLIC_URL}/api/mint`, {
         method: 'POST',
@@ -110,6 +112,7 @@ const Home: NextPage = () => {
           blergId: totalSupply
         }) 
     })
+    console.log(response)
   }
 
   const addSelectedTrait = (traitId: number) => {
@@ -178,14 +181,7 @@ React.useEffect( () => {
       </Head>
 
       <main className={styles.main}>
-        <nav>
-          <Link href="/web">web</Link>
-          <br/>
-          <Link href="/staking">staking</Link>
-          <br/>
-          <Link className={styles.link} href="/direct">direct</Link>
-        </nav>
-
+        <Navbar/>
         <h2>Traits/Blergs Integration MVP</h2>
 
         <ConnectButton />

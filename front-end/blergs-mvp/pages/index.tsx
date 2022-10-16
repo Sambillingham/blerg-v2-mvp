@@ -1,20 +1,10 @@
 import React from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
-import Link from 'next/link';
+import Navbar from '../components/navbar';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 
-import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads } from 'wagmi';
-import ContractInterfaceTraits from '../Traits.json';
-import ContractInterfaceBlergs from '../Blergs.json';
-
-
 const Home: NextPage = () => {
- 
-
-
- 
   return (
     <div className={styles.container}>
       <Head>
@@ -28,14 +18,7 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h2>Traits/Blergs Integration MVP</h2>
-        <nav>
-          <Link href="/web">web</Link>
-          <br/>
-          <Link href="/staking">staking</Link>
-          <br/>
-          <Link className={styles.link} href="/direct">direct</Link>
-        </nav>
-
+        <Navbar/>
       </main>
 
       <footer className={styles.footer}>
