@@ -8,10 +8,10 @@ import "hardhat/console.sol";
 
 
 interface ERC1155 {
-    function staked(address userAddress, uint256 id) external view returns (bool);
+    function balanceOfBatch(address[] calldata accounts, uint256[5] calldata ids) external view returns (uint256[] memory);
 }
 
-contract BlergsWeb is ERC721 {
+contract BlergsWeb is ERC721, ERC721Enumerable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
 
@@ -24,7 +24,7 @@ contract BlergsWeb is ERC721 {
     }
 
     function _baseURI() internal pure override returns (string memory) {
-        return 'uri://';
+        return 'https://blerg-v2-mvp.vercel.app/api/blerg/';
     }
 
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
@@ -40,15 +40,25 @@ contract BlergsWeb is ERC721 {
         uint256 tokenId = _tokenIds.current();
 
         _safeMint(msg.sender, tokenId);
-
-        for (uint256 i = 0; i < traits.length; i++) {
-            if(!ERC1155(traitsContractAddress).staked(msg.sender, traits[i])){
-                revert("Trait is not staked");
-            }
-        }
-
+        
         _tokenIds.increment();
-        // event() -> listed on server
+    }
+    
+
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId)
+        internal
+        override(ERC721, ERC721Enumerable)
+    {
+        super._beforeTokenTransfer(from, to, tokenId);
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 
 }

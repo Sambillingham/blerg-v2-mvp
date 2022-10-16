@@ -20,10 +20,7 @@ contract TraitsStaking is ERC1155, Ownable {
         _setURI(newuri);
     }
 
-    function mintBatch(uint256[] memory ids, uint256[] memory amounts)
-        public
-        onlyOwner
-    {
+    function mintBatch(uint256[] memory ids, uint256[] memory amounts) public {
         _mintBatch(msg.sender, ids, amounts, '');
     }
 

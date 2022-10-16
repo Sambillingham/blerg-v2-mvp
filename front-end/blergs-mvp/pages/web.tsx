@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css';
 
 import { useAccount, usePrepareContractWrite, useContractWrite, useContractRead, usePrepareSendTransaction, useContractReads, useSignMessage } from 'wagmi';
 import ContractInterfaceTraits from '../Traits.json';
-import ContractInterfaceBlergs from '../Blergs.json';
+import ContractInterfaceBlergs from '../BlergsWeb.json';
 
 const { NEXT_PUBLIC_URL } = process.env;
 
@@ -26,12 +26,12 @@ const Home: NextPage = () => {
   React.useEffect(() => setMounted(true), []);
 
   const traitsContract = {
-    addressOrName: '0x4F449148AD107Ea76b888216Bf4fCAaba62D86d7',
+    addressOrName: '0x816d9a9e7D384b5fa6F47e82b62cBFB051CBf71a',
     contractInterface : ContractInterfaceTraits.abi
   }
 
   const blergsContract = {
-    addressOrName: '0x4f4899E99464Ee29d8f4e925C68e570c6EE945Ea',
+    addressOrName: '0xbF1C34f8864C97108295F51ADb66103533e02444',
     contractInterface : ContractInterfaceBlergs.abi
   }
 
