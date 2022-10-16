@@ -57,13 +57,6 @@ const Home: NextPage = () => {
     watch: true
   });
 
-  const { data: blergBal } = useContractRead({
-    ...blergsContract,
-    functionName: 'balanceOf',
-    args: [address],
-    watch: true
-  });
-
   const { data: contractSupply } = useContractRead({
     ...blergsContract,
     functionName: 'totalSupply',
@@ -272,20 +265,22 @@ React.useEffect( () => {
               Traits
             </h1>
               <div className={styles.traits}>
-                {totalMinted.map((x, i) =>
-                  <div key={i.toString()}>
-                    <div className={styles.trait} >
-                      #{i}
-                      <p>{x}</p>
-                    </div>
-                    <button 
-                      className={styles.button}
-                      onClick={() => addSelectedTrait?.(i)}
-                    >
-                      add
-                    </button>
-                  
-                  </div>
+                {totalMinted.map((x, i) => {
+                    if (x > 0) {
+                    return (
+                      <div key={i.toString()}>
+                        <div className={styles.trait} >
+                          #{i}
+                          <p>{x}</p>
+                        </div>
+                        <button 
+                          className={styles.button}
+                          onClick={() => addSelectedTrait?.(i)}
+                        >
+                          add
+                        </button>
+                    </div>)}
+                  }
                 )}
               </div>
             </div>

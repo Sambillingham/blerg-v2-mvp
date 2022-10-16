@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     id,
     "description": `Friendly Blerg Information `, 
     "external_url": `https://blergaversev2.io/${id}`, 
-    "image": "placeholder", 
+    "image": `https://blerg-v2-mvp.vercel.app/api/svg/${id}`, 
     attributes,
   });
 }

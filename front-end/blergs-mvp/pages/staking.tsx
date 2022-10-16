@@ -339,7 +339,7 @@ const Home: NextPage = () => {
                         <div>
                         {  allStaked[i] && (
                             <button 
-                            className={styles.button}
+                            className={`${styles.button} ${styles.buttonGreen}`}
                             onClick={() => addSelectedTrait?.(i)}
                             >
                             add (#{i})
@@ -366,7 +366,7 @@ const Home: NextPage = () => {
 
                             {  allStaked[i] && (
                             <button 
-                            className={styles.button}
+                            className={`${styles.button} ${styles.buttonRed}`}
                             onClick={() => emitUnstakeTrait?.(i)}
                             >
                             unstake (#{i})

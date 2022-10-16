@@ -128,6 +128,12 @@
   cursor: pointer;
   margin: 0.25rem;
 }
+.buttonGreen {
+  background-image: linear-gradient(to right, rgb(73, 160, 203), #4cde4e);
+}
+.buttonRed {
+  background-image: linear-gradient(to right, rgb(203, 106, 73), #de4c82);
+}
 
 .split { 
   display: flex;
