@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     console.log(blergId, traits)
 
-    console.log(blergId, traits)
+
     const blerg = await supabase
         .from('blerg')
         .insert({ 

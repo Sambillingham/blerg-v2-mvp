@@ -100,7 +100,7 @@ const Home: NextPage = () => {
         cache: 'no-cache',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          traits: selectedTraits,
+          traits: selectedTraits.join(''),
           blergId: totalSupply
         }) 
     })
@@ -212,27 +212,27 @@ const Home: NextPage = () => {
               </button>
             </div>
           )}
-          <div>
-           Total Supply {totalSupply}
-          </div>
-          <div>
-          {[...Array(totalSupply)].map((x, i) =>
-            <div key={i.toString()}>
-              <div className={styles.blerg} >
-                <Link href={`/api/blerg/${i}`}><a> {NEXT_PUBLIC_URL}/api/blerg/{i}</a></Link>
-                <p>owner : {(allOwners[i])?.substring(0,5)}</p>
-              </div>
-              <button 
-                className={styles.button}
-                onClick={() => emitSwitchTraits?.(i)}
-              >
-                switch Traits
-              </button>
+            <h2>
+            Total Supply {totalSupply}
+            </h2>
+            <div className={styles.blergContainer}>
+            {[...Array(totalSupply)].map((x, i) =>
+              <div className={styles.blergItem} key={i.toString()}>
+                <img className={styles.blergSvg} src={`/api/svg/${totalSupply - i-1}`}/>
+                <div className={styles.blergDetails} >
+                  <Link href={`/api/blerg/${totalSupply - i-1}`}><a> {NEXT_PUBLIC_URL}/api/blerg/{totalSupply - i-1}</a></Link>
+                </div>
+                <button 
+                  className={styles.button}
+                  onClick={() => emitSwitchTraits?.(totalSupply - i-1)}
+                >
+                  switch Traits
+                </button>
 
-            
+              
+              </div>
+            )}
             </div>
-          )}
-          </div>
           </div>
           
         </section>

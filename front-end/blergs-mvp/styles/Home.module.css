@@ -209,3 +209,29 @@
   border: dotted 2px blue;
   color: blue;
 }
+.blergContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.blergItem {
+  width: 50%;
+  flex-basis: 50%;
+  max-width: 300px;
+  padding: 1rem;
+
+}
+.blergSvg {
+  max-width: 100%;
+}
+.blergDetails {
+  padding: 0.5rem 0.25rem;
+  cursor: pointer;
+  background-color: #fafafa;
+  border: dotted 1px rgb(255, 198, 76);
+  position: relative;
+  font-size: 12px;
+  font-family: 'Courier New', Courier, monospace;
+}
