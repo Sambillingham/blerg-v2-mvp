@@ -27,21 +27,17 @@ export default async function handler(req, res) {
     <rect x="42.5" y="124.5" width="315" height="70" fill="#D7DBE7" stroke="#5390EC" stroke-width="3" stroke-dasharray="1 2"/>
     <rect x="42.5" y="288.5" width="315" height="70" fill="#D7DBE7" stroke="#5390EC" stroke-width="3" stroke-dasharray="1 2"/>
     <rect x="42.5" y="206.5" width="315" height="70" fill="#D7DBE7" stroke="#5390EC" stroke-width="3" stroke-dasharray="1 2"/>
-    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="369" y="378.258">${attributes[0]}</tspan></text>
-    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="81.2578">${attributes[1]}</tspan></text>
-    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="328.258">${attributes[2]}</tspan></text>
-    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="246.258">${attributes[3]}</tspan></text>
-    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="163.258">${attributes[4]}</tspan></text>
+    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="369" y="378.258">${attributes[4]}</tspan></text>
+    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="81.2578">${attributes[0]}</tspan></text>
+    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="328.258">${attributes[3]}</tspan></text>
+    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="246.258">${attributes[2]}</tspan></text>
+    <text fill="#5E81FF" xml:space="preserve" style="white-space: pre" font-family="Courier New" font-size="16" font-weight="bold" letter-spacing="0em"><tspan x="195" y="163.258">${attributes[1]}</tspan></text>
     </svg>
     
     `
     res.statusCode = 200
     res.statusCode = 200;
     res.setHeader("Content-Type", "image/svg+xml");
-    res.setHeader(
-      "Cache-Control",
-      "public, immutable, no-transform, s-maxage=31536000, max-age=31536000"
-    );
     return res.end(svg)
 }
 

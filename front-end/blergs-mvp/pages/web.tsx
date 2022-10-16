@@ -18,6 +18,8 @@ const Home: NextPage = () => {
   const [totalSupply, setTotalSupply] = React.useState<number>(0);
   const [allOwners, setAllOwners] = React.useState<any[]>([])
   const [selectedTraits, setSelectedTraits] = React.useState<number[]>([]);
+  const [allImg, setAllImg] = React.useState<string[]>([]);
+  
   
   const { address, isConnected } = useAccount();
 
@@ -71,7 +73,7 @@ const Home: NextPage = () => {
 
   const { data: signedMessage, error, isLoading, signMessage } = useSignMessage({
     async onSuccess(data, variables) {
-      console.log(signedMessage);
+      console.log(data);
 
       const response = await fetch(`${NEXT_PUBLIC_URL}/api/verify`, {
           method: 'POST',
@@ -83,7 +85,18 @@ const Home: NextPage = () => {
             signedMessage: data
           }) 
       })
+      
+      let newArr = [...allImg]; 
+
+      const id = parseInt(variables.message.toString().split(':')[1])
+      console.log('ID',  id,variables.message.toString(),  variables.message.toString().split(':'));
+
+      newArr[id] = `/api/svg/${id}?${Date.now()}`
+      setAllImg(newArr);
+
+
       const json = await response.json();
+      console.log(json)
     },
   })
 
@@ -153,6 +166,13 @@ const Home: NextPage = () => {
     if (allOwnersAddress) setAllOwners(allOwnersAddress)
   }, [allOwnersAddress]);
 
+
+React.useEffect( () => {
+  if (totalSupply) {
+    setAllImg([...Array(totalSupply)].map( (x,i) => `/api/svg/${i}?${Date.now()}`))
+  }
+}, [totalSupply]);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -178,7 +198,6 @@ const Home: NextPage = () => {
         <ConnectButton />
 
         <div className={styles.intro}>
-        
         <p> <strong>Version: Web</strong> - Traits can be freely switched with a signed message</p>
           <ul>
           <li>Mint Pack of Traits - IDs #0-9</li>
@@ -218,7 +237,7 @@ const Home: NextPage = () => {
             <div className={styles.blergContainer}>
             {[...Array(totalSupply)].map((x, i) =>
               <div className={styles.blergItem} key={i.toString()}>
-                <img className={styles.blergSvg} src={`/api/svg/${totalSupply - i-1}`}/>
+                <img className={styles.blergSvg} src={allImg[totalSupply-i-1]}/>
                 <div className={styles.blergDetails} >
                   <Link href={`/api/blerg/${totalSupply - i-1}`}><a> {NEXT_PUBLIC_URL}/api/blerg/{totalSupply - i-1}</a></Link>
                 </div>

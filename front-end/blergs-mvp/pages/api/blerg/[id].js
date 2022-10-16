@@ -15,7 +15,7 @@ export default async function handler(req, res) {
       .select()
       .eq('blergId', id)
       .single()
-  
+
   const attributes = ref.data.traits.split('').map(x => {
     return { trait_value: x }
   })
