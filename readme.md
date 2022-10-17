@@ -6,9 +6,22 @@ Contract work for @blergsDAO
 
 **Blergs V2** - PFP character creator using the traits system. Artwork does not necessarily reflect that of traits. TraitsNFT is used as an *inventory* where individual traits can be  selected then represented by Bergs (or another third party project) in a unique way.
 
+- *Web (Uses a sign transaction flow to update traits)*
+- *Direct (Registers and calls a function in third party contract)*
+- *Staking (Stake/Unstake on Traits contract - check staked status from third-paty contract)*
+
+Interface deployed to Vercel - [https://blerg-v2-mvp.vercel.app](https://blerg-v2-mvp.vercel.app)
 
 ## Contracts 
 These contracts are for research/ideation purposes only and should not be considerd production ready. Not gas optimised. No permissions. 
+
+Contracts are deployed on Goerli
+- Blergs - 0x065dCEA8d4B7C6337802d293bEFA79020be64fF4
+- Blergs Staking - 0x5f007Ae68b2D456f9eaa7d51431D48514F230ec2
+- Blergs Web - 0x3C1fFa7FbFAbefA76528B8669bC9004ce569A708
+- Traits - 0x816d9a9e7D384b5fa6F47e82b62cBFB051CBf71a
+- Traits Staking - 0x08E281361FD34aF8Af4BfBd3C81B871C5C4178B7
+
 
 ### Blergs (Direct)
 
@@ -72,6 +85,9 @@ Contains a minimal interface for three versions
     - Direct (Registers and calls a function in third party contract)
     - Staking (Stake/Unstake on Traits contract - check staked status from third-paty contract)
 
+Flow is described on each interface page - [https://blerg-v2-mvp.vercel.app](https://blerg-v2-mvp.vercel.app). There is no error handling - see console for errors
+
+
 ## API
 - Metadata Endpoint `/api/blerg/[id]`
 Returns Json Metadata used by Wallet/Marketplace. Stored on an external databse.
@@ -86,6 +102,11 @@ Returns Json Metadata used by Wallet/Marketplace. Stored on an external databse.
   }
 ```
 
+#### Database schema
+
+| ID (Unique)| Traits | blergId|
+| ----------- | ----------- | ----------- |
+| int8      | Varchar       |int8 |
 
 - dnyamic SVG Enpoint `/api/svg/[id]`
 Returns an example Image that represents the Traits used to build the blerg
