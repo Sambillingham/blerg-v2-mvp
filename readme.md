@@ -73,6 +73,32 @@ Sets a third party contract to call `onTraitTransfer` - each user maintains thei
 ```function stake(uint256 id) function unstake(uint256 id)```
 Non-Escrow Stake/Unstake functionality - restricts transfer while 'staked'. Does not directly link to external contracts. Thirs party contracts are expected to call `staked(unint256 id)` as needed.
 
+## Contract Tests
+```
+run hardhat test
+```
+*Expected Output*
+```
+ Blergs
+    ✓ Should return uri with 0000 for a new blank blergs
+    ✓ Should return uri with relevant traits
+    ✓ Should swap 5 traits
+    ✓ Transfer Blergs (without Traits) - Should be a blank Blerg after Transfer 
+    ✓ Transfer Blergs (with Traits) - Should be a blank Blerg after Transfer 
+    ✓ Transfer Trait (used on Blerg) - Should disable/default any blergs with trait transfered
+    ✓ Transfer Trait (NOT used on Blerg) - Should not change blergs
+
+  Blergs Staking
+    ✓ Should mint 10 traits
+    ✓ Should stake 1 trait
+    ✓ Should unstake 1 traits
+    ✓ Should fail to transfer a staked Trait
+    ✓ Should transfer a  Trait
+    ✓ Should switch 3 Traits from staked
+    ✓ Should mint a blerg with 3 Traits from staked
+    ✓ Unstaking used traits should return blank uri URI 
+    ✓ Transfer Blergs (with Traits) - Should be a blank Blerg after Transfer 
+```
 
     
 ## Front-end
@@ -88,6 +114,16 @@ Contains a minimal interface for three versions
 
 Flow is described on each interface page - [https://blerg-v2-mvp.vercel.app](https://blerg-v2-mvp.vercel.app). There is no error handling - see console for errors
 
+```
+.env.local
+// Local
+NEXT_PUBLIC_URL="http://localhost:3000"
+
+```
+
+```
+npm run dev
+```
 
 ## API
 - Metadata Endpoint `/api/blerg/[id]`
@@ -109,7 +145,59 @@ Returns Json Metadata used by Wallet/Marketplace. Stored on an external supabase
 | ----------- | ----------- | ----------- |
 | int8      | Varchar       |int8 |
 
+
+```
+.env
+SUPABASE_SERVICE_API_KEY=
+DATABASE_URL=
+```
+
+
 - dnyamic SVG Enpoint `/api/svg/[id]`
 Returns an example Image that represents the Traits used to build the blerg
 
 ![svg](https://blerg-v2-mvp.vercel.app/api/svg/0)
+
+
+
+## Gas Ouputs
+Should be considereds as an estimate only. Likely to be higher as final versions will include addition features and checks for permissions etc.
+
+```
+·--------------------------------------|---------------------------|--------------|-----------------------------·
+         Solc version: 0.8.17         ·  Optimizer enabled: true  ·  Runs: 1000  ·  Block limit: 30000000 gas  │
+·······································|···························|··············|······························
+|  Methods                             ·               51 gwei/gas                ·       1325.79 usd/eth       │
+··················|····················|·············|·············|··············|···············|··············
+|  Contract       ·  Method            ·  Min        ·  Max        ·  Avg         ·  # calls      ·  usd (avg)  │
+··················|····················|·············|·············|··············|···············|··············
+|  Blergs         ·  mint              ·          -  ·          -  ·      148186  ·            8  ·      10.02  │
+··················|····················|·············|·············|··············|···············|··············
+|  Blergs         ·  mintWithTraits    ·          -  ·          -  ·      383511  ·            6  ·      25.93  │
+··················|····················|·············|·············|··············|···············|··············
+|  Blergs         ·  safeTransferFrom  ·      73413  ·      76213  ·       74813  ·            2  ·       5.06  │
+··················|····················|·············|·············|··············|···············|··············
+|  Blergs         ·  setTraits         ·          -  ·          -  ·      264458  ·            2  ·      17.88  │
+··················|····················|·············|·············|··············|···············|··············
+|  Blergs         ·  setTraitsAddress  ·          -  ·          -  ·       43946  ·            5  ·       2.97  │
+··················|····················|·············|·············|··············|···············|··············
+|  BlergsStaking  ·  mintWithTraits    ·          -  ·          -  ·      283309  ·            8  ·      19.16  │
+··················|····················|·············|·············|··············|···············|··············
+|  BlergsStaking  ·  safeTransferFrom  ·          -  ·          -  ·       73435  ·            1  ·       4.97  │
+··················|····················|·············|·············|··············|···············|··············
+|  BlergsStaking  ·  setTraits         ·          -  ·          -  ·       86351  ·            2  ·       5.84  │
+··················|····················|·············|·············|··············|···············|··············
+|  BlergsStaking  ·  setTraitsAddress  ·      43912  ·      43924  ·       43921  ·            4  ·       2.97  │
+··················|····················|·············|·············|··············|···············|··············
+|  Traits         ·  mintBatch         ·          -  ·          -  ·      263641  ·            5  ·      17.83  │
+··················|····················|·············|·············|··············|···············|··············
+|  Traits         ·  safeTransferFrom  ·      81907  ·      92999  ·       87453  ·            2  ·       5.91  │
+··················|····················|·············|·············|··············|···············|··············
+|  TraitsStaking  ·  mintBatch         ·          -  ·          -  ·      288500  ·            8  ·      19.51  │
+··················|····················|·············|·············|··············|···············|··············
+|  TraitsStaking  ·  safeTransferFrom  ·          -  ·          -  ·       54493  ·            1  ·       3.68  │
+··················|····················|·············|·············|··············|···············|··············
+|  TraitsStaking  ·  stake             ·      45067  ·      45079  ·       45076  ·           26  ·       3.05  │
+··················|····················|·············|·············|··············|···············|··············
+|  TraitsStaking  ·  unstake           ·          -  ·          -  ·       23173  ·            2  ·       1.57  │
+```

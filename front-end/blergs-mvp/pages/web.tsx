@@ -184,7 +184,7 @@ React.useEffect( () => {
           <ul>
           <li>Mint Pack of Traits - IDs #0-9</li>
           <li>Mint a blerg with Traits</li>
-          <li>Switch Traits on existing Blerg - Freely</li>
+          <li>Switch Traits on existing Blerg -(sign a transaction) 0eth cost</li>
           <li>Letters A-E represent using a non-Trait NFT as part of a blerg </li>
           </ul>
         </div>
