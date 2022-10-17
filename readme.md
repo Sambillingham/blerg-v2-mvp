@@ -22,17 +22,18 @@ Contracts are deployed on Goerli
 - Traits - 0x816d9a9e7D384b5fa6F47e82b62cBFB051CBf71a
 - Traits Staking - 0x08E281361FD34aF8Af4BfBd3C81B871C5C4178B7
 
+## Integrating with Traits Contract (Examples)
 
 ### Blergs (Direct)
 
 ```function onTraitTransfer(address from, uint256[] memory traitIds)```
+Include this function in a third Party contract as with Blergs to integrate directly with Traits and action callbacks on Trait Transfers. Within Traits/Blergs this sets artwork to default when selling/sending Traits that are in use. Functionality can be extended within this function as needed.
 
-Purpose is to restrict sending of Blergs with traits but functionality could be extended within this function
+- Called from Traits contract directly within `onSafeTransfer`
+- Checks if trait is in use on senders blergs 
+- Resets blerg to default artwork reference if resulting balance of send would be too low
 
-    - Called from Traits contract directly within `onSafeTransfer`
-    - Checks if traits on in use on senders blergs 
-    - Resets blerg to default artwork reference if resulting balance of send would be zero
-    - Loop is inefficient and should be reconsidered 
+*Loop is inefficient and could cause issues at scale *
 
 ```function setTraits(uint256 tokenId, uint256[] calldata traits)```
 Stores a reference for each trait used on each Blerg within the contract. 
@@ -44,7 +45,7 @@ Builds an Artwork reference which should match a URI stored on IPFS. e.g uri://i
     Mints Token and calls `setTraits`
 
 #### Notes 
-*Override* ```_beforeTokenTransfer```
+*Override* ```_beforeTokenTransfer``` - to reset the artwork on Transfer.
 
 
 ### Blergs Staking
@@ -58,10 +59,10 @@ Calls the traits contract checking for `staked` traits
 
 ### Blergs Web
 ```mintBlank()``` 
-Only mints a blank blerg - Traits are sent via the switch Trait signed message functionality (vercel api)
+Only mints a blank blerg - Traits are sent via the switch Trait signed message functionality (see front-end interface)
 
 
-### Traits 
+### Traits Direct Interface
 Barebones 1155 for testing idea for linking ontract. Traits uses a direct link. Third Party contract call `registerAddress`. `onTraitTransfer` calls `onTraitTransfer` in the registed contract.
 
 ```function registerAddress(address contractAddress, address user)```
@@ -70,15 +71,15 @@ Sets a third party contract to call `onTraitTransfer` - each user maintains thei
 
 ### Traits Staking
 ```function stake(uint256 id) function unstake(uint256 id)```
-Non-Escrow Stake/Unstake functionality - restricts transfer while 'staked'. Does not directly link to external contracts.
-    
+Non-Escrow Stake/Unstake functionality - restricts transfer while 'staked'. Does not directly link to external contracts. Thirs party contracts are expected to call `staked(unint256 id)` as needed.
 
+
+    
 ## Front-end
 
 React/Next.js App
-
-/Rainbow Kit
-/Wagmi 
+/Rainbow Kit -  [http://rainbowkit.com](http://rainbowkit.com)
+/Wagmi React Hooks - [http://wagmi.sh](http://wagmi.sh)
 
 Contains a minimal interface for three versions 
     - Web (Uses a sign transaction for to update traits)
@@ -90,7 +91,7 @@ Flow is described on each interface page - [https://blerg-v2-mvp.vercel.app](htt
 
 ## API
 - Metadata Endpoint `/api/blerg/[id]`
-Returns Json Metadata used by Wallet/Marketplace. Stored on an external databse.
+Returns Json Metadata used by Wallet/Marketplace. Stored on an external supabase databse.
 ```
 {
     "name": `Blerg #${id}`,
@@ -110,3 +111,5 @@ Returns Json Metadata used by Wallet/Marketplace. Stored on an external databse.
 
 - dnyamic SVG Enpoint `/api/svg/[id]`
 Returns an example Image that represents the Traits used to build the blerg
+
+![svg](https://blerg-v2-mvp.vercel.app/api/svg/0)
