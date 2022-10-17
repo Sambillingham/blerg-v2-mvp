@@ -15,7 +15,7 @@ Interface deployed to Vercel - [https://blerg-v2-mvp.vercel.app](https://blerg-v
 ## Contracts 
 These contracts are for research/ideation purposes only and should not be considerd production ready. Not gas optimised. No permissions. 
 
-Contracts are deployed on Goerli
+Contracts are deployed on Goerli Eth Testnet
 - Blergs - 0x065dCEA8d4B7C6337802d293bEFA79020be64fF4
 - Blergs Staking - 0x5f007Ae68b2D456f9eaa7d51431D48514F230ec2
 - Blergs Web - 0x3C1fFa7FbFAbefA76528B8669bC9004ce569A708
@@ -27,6 +27,7 @@ Contracts are deployed on Goerli
 ### Blergs (Direct)
 
 ```function onTraitTransfer(address from, uint256[] memory traitIds)```
+
 Include this function in a third Party contract as with Blergs to integrate directly with Traits and action callbacks on Trait Transfers. Within Traits/Blergs this sets artwork to default when selling/sending Traits that are in use. Functionality can be extended within this function as needed.
 
 - Called from Traits contract directly within `onSafeTransfer`
@@ -36,6 +37,7 @@ Include this function in a third Party contract as with Blergs to integrate dire
 *Loop is inefficient and could cause issues at scale *
 
 ```function setTraits(uint256 tokenId, uint256[] calldata traits)```
+
 Stores a reference for each trait used on each Blerg within the contract. 
 Builds an Artwork reference which should match a URI stored on IPFS. e.g uri://ipfshash/1_2_3_4_5 
 `registerAddress` - stores this contract for the sender to later call the `onTraitTransfer`
@@ -50,6 +52,7 @@ Builds an Artwork reference which should match a URI stored on IPFS. e.g uri://i
 
 ### Blergs Staking
 ```tokenURI(uint256 tokenId) public view virtual override returns (string memory) ```
+
 Token URI Override - checks the owner of token has the required tokens staked (incase they have been unstaked since building the blerg) 
 Creates the Artwork reference on read, shows a default uri if tokens ar enot staked
 
@@ -59,6 +62,7 @@ Calls the traits contract checking for `staked` traits
 
 ### Blergs Web
 ```mintBlank()``` 
+
 Only mints a blank blerg - Traits are sent via the switch Trait signed message functionality (see front-end interface)
 
 
@@ -66,11 +70,13 @@ Only mints a blank blerg - Traits are sent via the switch Trait signed message f
 Barebones 1155 for testing idea for linking ontract. Traits uses a direct link. Third Party contract call `registerAddress`. `onTraitTransfer` calls `onTraitTransfer` in the registed contract.
 
 ```function registerAddress(address contractAddress, address user)```
+
 Sets a third party contract to call `onTraitTransfer` - each user maintains their own list of linked contracts. Gas issues need to be considered on large lists of linked projects calling unknown functions in other contracts. 
 
 
 ### Traits Staking
 ```function stake(uint256 id) function unstake(uint256 id)```
+
 Non-Escrow Stake/Unstake functionality - restricts transfer while 'staked'. Does not directly link to external contracts. Thirs party contracts are expected to call `staked(unint256 id)` as needed.
 
 ## Contract Tests
@@ -103,14 +109,14 @@ run hardhat test
     
 ## Front-end
 
-React/Next.js App
-/Rainbow Kit -  [http://rainbowkit.com](http://rainbowkit.com)
-/Wagmi React Hooks - [http://wagmi.sh](http://wagmi.sh)
+- React/Next.js App
+- Rainbow Kit -  [http://rainbowkit.com](http://rainbowkit.com)
+- Wagmi React Hooks - [http://wagmi.sh](http://wagmi.sh)
 
-Contains a minimal interface for three versions 
-    - Web (Uses a sign transaction for to update traits)
-    - Direct (Registers and calls a function in third party contract)
-    - Staking (Stake/Unstake on Traits contract - check staked status from third-paty contract)
+Contains a minimal interface for three versions -
+- Web (Uses a sign transaction for to update traits)
+- Direct (Registers and calls a function in third party contract)
+- Staking (Stake/Unstake on Traits contract - check staked status from third-paty contract)
 
 Flow is described on each interface page - [https://blerg-v2-mvp.vercel.app](https://blerg-v2-mvp.vercel.app). There is no error handling - see console for errors
 
@@ -118,7 +124,6 @@ Flow is described on each interface page - [https://blerg-v2-mvp.vercel.app](htt
 .env.local
 // Local
 NEXT_PUBLIC_URL="http://localhost:3000"
-
 ```
 
 ```
@@ -126,7 +131,8 @@ npm run dev
 ```
 
 ## API
-- Metadata Endpoint `/api/blerg/[id]`
+*Metadata Endpoint* `/api/blerg/[id]`
+
 Returns Json Metadata used by Wallet/Marketplace. Stored on an external supabase databse.
 ```
 {
@@ -136,7 +142,7 @@ Returns Json Metadata used by Wallet/Marketplace. Stored on an external supabase
     "external_url": `https://blergaversev2.io/${id}`, 
     "image": `https://blerg-v2-mvp.vercel.app/api/svg/${id}`, 
     attributes: [...]
-  }
+}
 ```
 
 #### Database schema
@@ -153,7 +159,8 @@ DATABASE_URL=
 ```
 
 
-- dnyamic SVG Enpoint `/api/svg/[id]`
+*dnyamic SVG Enpoint* `/api/svg/[id]`
+
 Returns an example Image that represents the Traits used to build the blerg
 
 ![svg](https://blerg-v2-mvp.vercel.app/api/svg/0)
@@ -161,7 +168,7 @@ Returns an example Image that represents the Traits used to build the blerg
 
 
 ## Gas Ouputs
-Should be considereds as an estimate only. Likely to be higher as final versions will include addition features and checks for permissions etc.
+Should be considereds as an estimate only. Likely to be higher as final versions will include addition features and checks for permissions etc. - note output below is @51gwei
 
 ```
 ·--------------------------------------|---------------------------|--------------|-----------------------------·
