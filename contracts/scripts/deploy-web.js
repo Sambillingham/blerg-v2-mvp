@@ -9,7 +9,6 @@ async function main() {
   const blergs = await BlergsFactory.deploy();
 
   await blergs.deployed();
-  await blergs.setTraitsAddress('0x816d9a9e7D384b5fa6F47e82b62cBFB051CBf71a')
 
   console.log("blergs -> deployed to:", blergs.address);
 }

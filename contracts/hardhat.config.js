@@ -1,4 +1,5 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-etherscan");
 require("hardhat-gas-reporter");
 require('dotenv').config();
 
@@ -24,5 +25,8 @@ module.exports = {
   gasReporter: {
     currency: 'USD',
     coinmarketcap: process.env.COINCAP_API,
+  },
+  etherscan: {
+    apiKey: process.env.ETHERSCAN_API,
   }
 };

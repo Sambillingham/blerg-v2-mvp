@@ -32,7 +32,7 @@ const Home: NextPage = () => {
   }
 
   const blergsContract = {
-    addressOrName: '0xbF1C34f8864C97108295F51ADb66103533e02444',
+    addressOrName: '0x3C1fFa7FbFAbefA76528B8669bC9004ce569A708',
     contractInterface : ContractInterfaceBlergs.abi
   }
 
@@ -45,8 +45,7 @@ const Home: NextPage = () => {
 
   const { config: configBlergs } = usePrepareContractWrite({
     ...blergsContract,
-    functionName: 'mintWithTraits',
-    args: [selectedTraits]
+    functionName: 'mintBlank',
   });
   const { write: mintBlerg } = useContractWrite(configBlergs);
 
@@ -115,7 +114,7 @@ const Home: NextPage = () => {
     console.log(response)
   }
 
-  const addSelectedTrait = (traitId: number) => {
+  const addSelectedTrait = (traitId: any) => {
     const t = selectedTraits
     t.push(traitId)
     if(t.length > 5){
@@ -279,6 +278,26 @@ React.useEffect( () => {
                   }
                 )}
               </div>
+              <h1 className={styles.title}>
+              Other NFT
+              </h1>
+                <div className={styles.traits}>
+                  {['A','B','C','D','E'].map((x, i) => {
+                      return (
+                        <div key={i.toString()}>
+                          <div className={styles.trait} >
+                            #{x}
+                          </div>
+                          <button 
+                            className={styles.button}
+                            onClick={() => addSelectedTrait?.(x)}
+                          >
+                            add
+                          </button>
+                      </div>)
+                    }
+                  )}
+                </div>
             </div>
           )}
           </div>
