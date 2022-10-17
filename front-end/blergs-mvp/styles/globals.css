@@ -16,3 +16,7 @@ a {
   box-sizing: border-box;
 }
 
+
+hr {
+  border-top: 1px dashed dodgerblue;
+}

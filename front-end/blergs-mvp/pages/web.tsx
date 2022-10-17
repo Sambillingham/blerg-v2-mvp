@@ -17,7 +17,6 @@ const Home: NextPage = () => {
 
   const [totalMinted, setTotalMinted] = React.useState<number[]>([]);
   const [totalSupply, setTotalSupply] = React.useState<number>(0);
-  const [allOwners, setAllOwners] = React.useState<any[]>([])
   const [selectedTraits, setSelectedTraits] = React.useState<number[]>([]);
   const [allImg, setAllImg] = React.useState<string[]>([]);
   
@@ -157,11 +156,6 @@ const Home: NextPage = () => {
     watch: true,
   })
 
-  React.useEffect( () => {
-    if (allOwnersAddress) setAllOwners(allOwnersAddress)
-  }, [allOwnersAddress]);
-
-
 React.useEffect( () => {
   if (totalSupply) {
     setAllImg([...Array(totalSupply)].map( (x,i) => `/api/svg/${i}?${Date.now()}`))
@@ -189,8 +183,9 @@ React.useEffect( () => {
         <p> <strong>Version: Web</strong> - Traits can be freely switched with a signed message</p>
           <ul>
           <li>Mint Pack of Traits - IDs #0-9</li>
-          <li>Select Traits you own to use to Mint</li>
+          <li>Mint a blerg with Traits</li>
           <li>Switch Traits on existing Blerg - Freely</li>
+          <li>Letters A-E represent using a non-Trait NFT as part of a blerg </li>
           </ul>
         </div>
         
@@ -227,7 +222,13 @@ React.useEffect( () => {
               <div className={styles.blergItem} key={i.toString()}>
                 <img className={styles.blergSvg} src={allImg[totalSupply-i-1]}/>
                 <div className={styles.blergDetails} >
-                  <Link href={`/api/blerg/${totalSupply - i-1}`}><a> {NEXT_PUBLIC_URL}/api/blerg/{totalSupply - i-1}</a></Link>
+                  <Link href={`/api/blerg/${totalSupply - i-1}`}>
+                    <a> {NEXT_PUBLIC_URL}/api/blerg/{totalSupply - i-1}</a>
+                  </Link>
+                  <hr/>
+                  <Link href={`https://testnets.opensea.io/assets/goerli/${blergsContract.addressOrName}/${totalSupply - i-1}`}>
+                    <a>OpenSea</a>
+                  </Link>
                 </div>
                 <button 
                   className={styles.button}
