@@ -6,6 +6,8 @@ import { chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 
+const { NEXT_PUBLIC_ALCHEMY_API } = process.env;
+
 const { chains, provider, webSocketProvider } = configureChains(
   [
     // chain.mainnet,
@@ -22,7 +24,7 @@ const { chains, provider, webSocketProvider } = configureChains(
     alchemyProvider({
       // This is Alchemy's default API key.
       // You can get your own at https://dashboard.alchemyapi.io
-      apiKey: '_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC',
+      apiKey: NEXT_PUBLIC_ALCHEMY_API,
     }),
     publicProvider(),
   ]
